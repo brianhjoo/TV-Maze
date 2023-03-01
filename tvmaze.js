@@ -4,7 +4,7 @@ const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
 
-
+$('input').attr('value', '');
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -16,9 +16,8 @@ const $searchForm = $("#searchForm");
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
   const response = await axios.get(`http://api.tvmaze.com/search/shows?q=${term}`);
-  console.log('response.data: ', response.data)
+
   return response.data;
-  
 }
 
 
@@ -26,19 +25,21 @@ async function getShowsByTerm(term) {
 
 async function populateShows(shows) {
   $showsList.empty();
-  let awaitShows = await shows;
-  console.log('awaitShows', awaitShows)
+
+  const awaitShows = await shows;
+
   for (let show of awaitShows) {
+    const { id, image, name, summary } = show.show;
     const $show = $(
-      `<div data-show-id="${show.show.id}" class="Show col-md-12 col-lg-6 mb-4">
+      `<div data-show-id="${id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src="http://static.tvmaze.com/uploads/images/medium_portrait/160/401704.jpg"
-              alt="Bletchly Circle San Francisco"
+              src="${!image ? 'https://tinyurl.com/tv-missing' : image.medium}"
+              alt=""
               class="w-25 me-3">
            <div class="media-body">
-             <h5 class="text-primary">${show.show.name}</h5>
-             <div><small>${show.show.summary}</small></div>
+             <h5 class="text-primary">${name}</h5>
+             <div><small>${summary}</small></div>
              <button class="btn btn-outline-light btn-sm Show-getEpisodes">
                Episodes
              </button>
@@ -59,7 +60,7 @@ async function populateShows(shows) {
 async function searchForShowAndDisplay() {
   const term = $("#searchForm-term").val();
   const shows = await getShowsByTerm(term);
-  console.log('term: ', term);
+
   $episodesArea.hide();
   populateShows(shows);
 }
