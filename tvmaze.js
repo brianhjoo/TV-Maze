@@ -16,11 +16,14 @@ $('input').attr('value', '');
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
   const response = await axios.get(`http://api.tvmaze.com/search/shows?q=${term}`);
-  const shows = response.data.map(function (tvShow) {
-    const { id, name, summary, image} = tvShow.show;
+  console.log('response.data', response.data)
+  
+  const shows = response.data.map(function (showAndScore) {
+    let { id, name, summary, image} = showAndScore.show;
+    image = !image ? 'https://tinyurl.com/tv-missing' : image.medium
     return { id, name, summary, image};
   });
-  
+
   return shows;
 }
 
@@ -37,8 +40,8 @@ async function populateShows(shows) {
       `<div data-show-id="${id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src="${!image ? 'https://tinyurl.com/tv-missing' : image.medium}"
-              alt=""
+              src="${image}"
+              alt="${name}"
               class="w-25 me-3">
            <div class="media-body">
              <h5 class="text-primary">${name}</h5>
