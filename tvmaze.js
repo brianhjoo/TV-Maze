@@ -17,11 +17,11 @@ async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
   const response = await axios.get(`http://api.tvmaze.com/search/shows?q=${term}`);
   // console.log('response.data', response.data)
-  
+
   const shows = response.data.map(function (showAndScore) {
-    let { id, name, summary, image} = showAndScore.show;
-    image = !image ? 'https://tinyurl.com/tv-missing' : image.medium
-    return { id, name, summary, image};
+    let { id, name, summary, image } = showAndScore.show;
+    image = !image ? 'https://tinyurl.com/tv-missing' : image.medium;
+    return { id, name, summary, image };
   });
 
   return shows;
@@ -67,6 +67,9 @@ async function searchForShowAndDisplay() {
 
   $episodesArea.hide();
   populateShows(shows);
+
+  const $id = $('.Show').data('showId');
+  getEpisodesOfShow($id);
 }
 
 $searchForm.on("submit", function (evt) {
@@ -79,7 +82,19 @@ $searchForm.on("submit", function (evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+
+
+async function getEpisodesOfShow(id) {
+  const response = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
+
+  const episodes = response.data.map(function (showData) {
+    const { id, name, season, number } = showData;
+    return { id, name, season, number };
+  });
+
+  console.log('episodes array: ', episodes);
+  return episodes;
+}
 
 /** Write a clear docstring for this function... */
 
