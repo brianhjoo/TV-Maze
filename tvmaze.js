@@ -16,8 +16,12 @@ $('input').attr('value', '');
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
   const response = await axios.get(`http://api.tvmaze.com/search/shows?q=${term}`);
-
-  return response.data;
+  const shows = response.data.map(function (tvShow) {
+    const { id, name, summary, image} = tvShow.show;
+    return { id, name, summary, image};
+  });
+  
+  return shows;
 }
 
 
@@ -27,9 +31,8 @@ async function populateShows(shows) {
   $showsList.empty();
 
   const awaitShows = await shows;
-
   for (let show of awaitShows) {
-    const { id, image, name, summary } = show.show;
+    const { id, image, name, summary } = show;
     const $show = $(
       `<div data-show-id="${id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
