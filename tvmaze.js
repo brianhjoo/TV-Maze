@@ -16,7 +16,7 @@ $('input').attr('value', '');
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
   const response = await axios.get(`http://api.tvmaze.com/search/shows?q=${term}`);
-  console.log('response.data', response.data)
+  // console.log('response.data', response.data)
   
   const shows = response.data.map(function (showAndScore) {
     let { id, name, summary, image} = showAndScore.show;
@@ -30,11 +30,9 @@ async function getShowsByTerm(term) {
 
 /** Given list of shows, create markup for each and to DOM */
 
-async function populateShows(shows) {
+function populateShows(shows) {
   $showsList.empty();
-
-  const awaitShows = await shows;
-  for (let show of awaitShows) {
+  for (let show of shows) {
     const { id, image, name, summary } = show;
     const $show = $(
       `<div data-show-id="${id}" class="Show col-md-12 col-lg-6 mb-4">
@@ -71,9 +69,9 @@ async function searchForShowAndDisplay() {
   populateShows(shows);
 }
 
-$searchForm.on("submit", async function (evt) {
+$searchForm.on("submit", function (evt) {
   evt.preventDefault();
-  await searchForShowAndDisplay();
+  searchForShowAndDisplay();
 });
 
 
